@@ -101,7 +101,7 @@ PROBES = {"greenhouse": probe_greenhouse,
 
 
 def discover_company(company):
-    """Probe ATS endpoints for each slug; keep the first that answers.
+    """Probe ATS endpoints for each slug. Keep the first that answers.
 
     If watchlist.json pins an "ats" field for the company, try that probe
     first to skip needless requests.
@@ -374,7 +374,7 @@ def main():
             meta = " `" + " · ".join(
                 ([", ".join(level)] if level else []) + hits) + "`"
         lines.append(f"- [{j['company']}] [{j['title']}]"
-                     f"({j['url']}) — {j.get('location', '')}{flag}{meta}")
+                     f"({j['url']}) | {j.get('location', '')}{flag}{meta}")
     if closed:
         lines += ["", "## Closed since last check\n"]
         lines += [f"- [{c['company']}] {c['title']}" for c in closed[:20]]

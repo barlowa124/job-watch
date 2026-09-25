@@ -89,7 +89,7 @@ launchctl load ~/Library/LaunchAgents/com.user.jobwatch.plist
 
 - This covers company boards directly, which is more complete for a
   targeted watchlist than scraping Indeed or LinkedIn. Neither has a
-  public job-search API; both block scraping. The aggregator integrations
+  public job-search API. Both block scraping. The aggregator integrations
   exist for the tail of the market.
 - `seen.json` and digest files are committed: they are the CI state and
   a running log of what the watchlist produced.
