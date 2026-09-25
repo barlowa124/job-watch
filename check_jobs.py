@@ -65,34 +65,36 @@ def _loc(v):
 def probe_greenhouse(slug):
     data = get_json(
         f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true")
-    if not isinstance(data, dict) or "jobs" not in data:
+    if not isinstance(data, dict) or not isinstance(
+            data.get("jobs"), list):
         return None
-    return [{"title": j["title"], "url": j["absolute_url"],
+    return [{"title": j["title"], "url": j.get("absolute_url") or "",
              "location": _loc(j.get("location")),
              "body": j.get("content", "")}
-            for j in data["jobs"]]
+            for j in data["jobs"] if isinstance(j, dict) and j.get("title")]
 
 
 def probe_lever(slug):
     data = get_json(f"https://api.lever.co/v0/postings/{slug}?mode=json")
     if not isinstance(data, list):
         return None
-    return [{"title": j["text"], "url": j["hostedUrl"],
+    return [{"title": j["text"], "url": j.get("hostedUrl") or "",
              "location": _loc((j.get("categories") or {}).get("location")),
              "body": j.get("descriptionPlain", "")}
-            for j in data]
+            for j in data if isinstance(j, dict) and j.get("text")]
 
 
 def probe_ashby(slug):
     data = get_json(
         f"https://api.ashbyhq.com/posting-api/job-board/{slug}"
         "?includeCompensation=true")
-    if not isinstance(data, dict) or "jobs" not in data:
+    if not isinstance(data, dict) or not isinstance(
+            data.get("jobs"), list):
         return None
     return [{"title": j["title"], "url": j.get("jobUrl") or "",
              "location": _loc(j.get("location")),
              "body": j.get("descriptionPlain") or j.get("descriptionHtml", "")}
-            for j in data["jobs"]]
+            for j in data["jobs"] if isinstance(j, dict) and j.get("title")]
 
 
 PROBES = {"greenhouse": probe_greenhouse,
