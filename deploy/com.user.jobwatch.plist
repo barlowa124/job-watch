@@ -6,9 +6,9 @@
     <string>com.user.jobwatch</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/bin/python3</string>
-        <string>/Users/asdf/CascadeProjects/job-search/check_jobs.py</string>
-        <string>--quiet</string>
+        <string>/bin/sh</string>
+        <string>-c</string>
+        <string>set -a; . "$HOME/.config/job-watch/env" 2>/dev/null; set +a; exec /usr/bin/python3 /Users/asdf/CascadeProjects/job-search/check_jobs.py --quiet</string>
     </array>
     <key>StartCalendarInterval</key>
     <dict>

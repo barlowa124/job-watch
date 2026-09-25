@@ -62,14 +62,16 @@ Output: `digest-YYYY-MM-DD.md`. State: `seen.json`.
 | `domain_keywords` | body keywords counted per posting and shown in the digest |
 | `manual_check_urls` | boards with no public API, listed at the digest bottom |
 
-Optional env vars:
+Optional env vars — export them, or drop them in
+`~/.config/job-watch/env` (one `KEY=value` per line, loaded at startup
+and by the launchd job):
 
 ```
-export ADZUNA_APP_ID=...   # developer.adzuna.com, free tier
-export ADZUNA_APP_KEY=...
-export SERPAPI_KEY=...       # serpapi.com, google_jobs engine
-export JOB_WATCH_NOTIFY=0    # disable macOS notification
-export JOB_WATCH_WEBHOOK=... # POST digest summary as JSON
+ADZUNA_APP_ID=...        # developer.adzuna.com, free tier
+ADZUNA_APP_KEY=...
+SERPAPI_KEY=...          # serpapi.com, google_jobs engine
+JOB_WATCH_NOTIFY=0       # disable macOS notification
+JOB_WATCH_WEBHOOK=...    # POST digest summary as JSON
 ```
 
 ## Tests

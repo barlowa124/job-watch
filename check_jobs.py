@@ -37,6 +37,14 @@ from datetime import date
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+
+_env_file = Path.home() / ".config" / "job-watch" / "env"
+if _env_file.exists():
+    for _line in _env_file.read_text().splitlines():
+        if "=" in _line and not _line.lstrip().startswith("#"):
+            _k, _, _v = _line.partition("=")
+            os.environ.setdefault(_k.strip(), _v.strip())
+
 WATCHLIST = json.loads((HERE / "watchlist.json").read_text())
 SEEN_PATH = HERE / "seen.json"
 _raw_seen = json.loads(SEEN_PATH.read_text()) if SEEN_PATH.exists() else {}
