@@ -1,0 +1,74 @@
+{
+  "companies": [
+    {"name": "Just Food Company", "slugs": ["justfoodcompany"], "tags": ["alt-protein", "protein-ml"]},
+    {"name": "Xaira Therapeutics", "slugs": ["xairatherapeutics"], "tags": ["ai-drug-discovery"]},
+    {"name": "Manifold Bio", "slugs": ["manifoldbio"], "tags": ["protein-ml"]},
+    {"name": "Dyno Therapeutics", "slugs": ["dynotherapeutics"], "tags": ["aav", "protein-ml"]},
+    {"name": "Vivodyne", "slugs": ["vivodyne"], "tags": ["organoid"]},
+    {"name": "Axle Informatics", "slugs": ["axle"], "tags": ["nih", "organoid"]},
+    {"name": "Recursion", "slugs": ["recursionpharma", "recursion"], "tags": ["ai-drug-discovery"]},
+    {"name": "Terray", "slugs": ["terray", "terraytx"], "tags": ["ai-drug-discovery"]},
+    {"name": "Insitro", "slugs": ["insitro"], "tags": ["ai-drug-discovery"]},
+    {"name": "Generate Biomedicines", "slugs": ["generatebiomedicines", "generatebio"], "tags": ["protein-ml"]},
+    {"name": "Chai Discovery", "slugs": ["chaidiscovery", "chai"], "tags": ["protein-ml"]},
+    {"name": "EvolutionaryScale", "slugs": ["evolutionaryscale"], "tags": ["protein-ml"]},
+    {"name": "Nomic Bio", "slugs": ["nomicbio", "nomic"], "tags": ["proteomics"]},
+    {"name": "UPSIDE Foods", "slugs": ["upsidefoods", "upside"], "tags": ["cultivated-meat"]},
+    {"name": "Shiru", "slugs": ["shiru"], "tags": ["alt-protein", "protein-ml"]},
+    {"name": "Believer Meats", "slugs": ["believermeats"], "tags": ["cultivated-meat"]},
+    {"name": "Wildtype", "slugs": ["wildtype", "wildtypefoods"], "tags": ["cultivated-meat"]},
+    {"name": "BlueNalu", "slugs": ["bluenalu"], "tags": ["cultivated-meat"]},
+    {"name": "Meatable", "slugs": ["meatable"], "tags": ["cultivated-meat"]},
+    {"name": "Pow.Bio", "slugs": ["powbio", "pow.bio"], "tags": ["biomanufacturing"]},
+    {"name": "Invert", "slugs": ["invert", "invertbio"], "tags": ["bioprocess-ml"]},
+    {"name": "Cradle", "slugs": ["cradle", "cradlebio"], "tags": ["protein-ml"]},
+    {"name": "Tamarind Bio", "slugs": ["tamarind", "tamarindbio"], "tags": ["compbio"]},
+    {"name": "Emulate", "slugs": ["emulate", "emulateinc"], "tags": ["nams", "organ-chip"]},
+    {"name": "CN Bio", "slugs": ["cnbio", "cn-bio"], "tags": ["nams", "organ-chip"]},
+    {"name": "MIMETAS", "slugs": ["mimetas"], "tags": ["nams", "organoid"]},
+    {"name": "Good Food Institute", "slugs": ["gfi", "thegoodfoodinstitute"], "tags": ["alt-protein"]},
+    {"name": "New Harvest", "slugs": ["newharvest"], "tags": ["cultivated-meat"]},
+    {"name": "Basecamp Research", "slugs": ["basecampresearch"], "tags": ["protein-ml"]},
+    {"name": "Culture Biosciences", "slugs": ["culturebiosciences", "culturebio"], "tags": ["biomanufacturing"]}
+  ],
+  "adzuna_queries": [
+    "machine learning protein scientist",
+    "computational toxicology",
+    "bioinformatics machine learning",
+    "research engineer scientific machine learning",
+    "cultivated meat data science"
+  ],
+  "serpapi_queries": [
+    "machine learning engineer protein design",
+    "scientific machine learning engineer biotech"
+  ],
+  "manual_check_urls": [
+    "https://www.zintellect.com/ (search: CCTE, computational toxicology, machine learning)",
+    "https://www.fsi.org/careers",
+    "https://www.pow.bio/ (careers section)",
+    "https://jobs.ashbyhq.com/Tamarind",
+    "https://www.invertbio.com/careers"
+  ],
+  "relevance_keywords": [
+    "machine learning", "ml ", "research engineer", "data scien",
+    "bioinformatic", "computational", "protein", "scientist",
+    "ai ", "deep learning", "data engineer", "software engineer",
+    "engineer", "developer", "intern", "data analyst", "informatics"
+  ],
+  "seniority_flags": [
+    "senior", "sr.", "staff", "principal", "director", "lead", "head",
+    "manager", "phd"
+  ],
+  "exclude_title_keywords": [
+    "account", "finance", "contract", "counsel", "legal", "hr ", "people",
+    "recruit", "talent", "sales", "marketing", "gtm", "business develop",
+    "administrat", "coordinator", "executive assist", "office",
+    "facilit", "nurse", "physician", "medical monitor", "entomolog",
+    "biolog", "chemist", "lab associate", "research associate",
+    "pharmacology", "clinical", "biostatistic", "regulatory", "quality"
+  ],
+  "preferred_locations": [
+    "remote", "raleigh", "durham", "research triangle", "rtp",
+    "north carolina", "nc"
+  ]
+}
