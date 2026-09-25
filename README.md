@@ -72,6 +72,15 @@ export JOB_WATCH_NOTIFY=0    # disable macOS notification
 export JOB_WATCH_WEBHOOK=... # POST digest summary as JSON
 ```
 
+## Tests
+
+```
+python3 -m unittest test_check_jobs -v
+```
+
+Covers the ATS parsers, board discovery order, Zintellect mapping, and
+the scoring and level heuristics. No network access required.
+
 ## Scheduled runs
 
 A launchd plist for weekly Monday 9 AM runs is in
