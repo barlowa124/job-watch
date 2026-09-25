@@ -42,6 +42,21 @@
     "machine learning engineer protein design",
     "scientific machine learning engineer biotech"
   ],
+  "zintellect_queries": [
+    "computational toxicology",
+    "machine learning",
+    "bioinformatics",
+    "new approach methods",
+    "data science"
+  ],
+  "domain_keywords": [
+    "pytorch", "jax", "tensorflow", "active learning", "bayesian",
+    "conformal", "protein", "multi-omic", "omics", "toxicolog",
+    "organoid", "diffusion", "language model", "llm", "bioinformatic",
+    "cheminformatic", "fermentation", "bioprocess", "transcriptom",
+    "genomic", "uncertainty", "reinforcement", "graph neural",
+    "molecular", "assay", "high-throughput", "food science"
+  ],
   "manual_check_urls": [
     "https://www.zintellect.com/ (search: CCTE, computational toxicology, machine learning)",
     "https://www.fsi.org/careers",
