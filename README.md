@@ -15,10 +15,12 @@ general job aggregator misses the niche.
   attainable roles first.
 - Tracks postings that disappeared since the last run, so closed roles
   do not sit silently in the backlog.
-- Optional aggregators: Adzuna (free tier) and SerpApi Google Jobs,
-  activated by environment variables.
-- Optional macOS notification via `osascript` when new relevant postings
-  appear.
+- Aggregators: ORISE/Zintellect fellowship catalog (no key needed),
+  Adzuna (free tier) and SerpApi Google Jobs via env vars.
+- Annotates each posting with domain-keyword hits found in the body and
+  a level hint parsed from the text (`N+ yrs`, `PhD` vs `PhD preferred`).
+- Optional macOS notification via `osascript`, plus `JOB_WATCH_WEBHOOK`
+  for a generic JSON webhook (Slack, Discord, Zapier, etc.).
 
 No third-party dependencies. Python 3.9+.
 
@@ -44,7 +46,8 @@ Output: `digest-YYYY-MM-DD.md`. State: `seen.json`.
 | `exclude_title_keywords` | title keywords that drop a posting (e.g. `finance`, `clinical`) |
 | `seniority_flags` | title words that push a posting to the bottom |
 | `preferred_locations` | location keywords to highlight |
-| `adzuna_queries` / `serpapi_queries` | aggregator search terms |
+| `adzuna_queries` / `serpapi_queries` / `zintellect_queries` | aggregator search terms |
+| `domain_keywords` | body keywords counted per posting and shown in the digest |
 | `manual_check_urls` | boards with no public API, listed at the digest bottom |
 
 Optional env vars:
@@ -52,14 +55,18 @@ Optional env vars:
 ```
 export ADZUNA_APP_ID=...   # developer.adzuna.com, free tier
 export ADZUNA_APP_KEY=...
-export SERPAPI_KEY=...     # serpapi.com, google_jobs engine
-export JOB_WATCH_NOTIFY=0  # disable macOS notification
+export SERPAPI_KEY=...       # serpapi.com, google_jobs engine
+export JOB_WATCH_NOTIFY=0    # disable macOS notification
+export JOB_WATCH_WEBHOOK=... # POST digest summary as JSON
 ```
 
 ## Scheduled runs
 
 A launchd plist for weekly Monday 9 AM runs is in
-`deploy/com.user.jobwatch.plist`. Install:
+`deploy/com.user.jobwatch.plist`. A GitHub Actions workflow
+(`.github/workflows/watch.yml`) does the same weekly run in CI and
+commits `seen.json` plus the digest back to the repo, so it works with
+the laptop off. Install launchd:
 
 ```
 cp deploy/com.user.jobwatch.plist ~/Library/LaunchAgents/
@@ -72,4 +79,5 @@ launchctl load ~/Library/LaunchAgents/com.user.jobwatch.plist
   targeted watchlist than scraping Indeed or LinkedIn. Neither has a
   public job-search API; both block scraping. The aggregator integrations
   exist for the tail of the market.
-- `seen.json` and digest files are local state and gitignored.
+- `seen.json` and digest files are committed: they are the CI state and
+  a running log of what the watchlist produced.

@@ -122,6 +122,41 @@ def discover_company(company):
     return {"name": company["name"], "ats": None, "slug": None, "jobs": []}
 
 
+def zintellect():
+    """ORISE fellowship catalog (EPA/NIH/USDA research appointments).
+
+    Uses the site's public DataTables endpoint. No key required.
+    """
+    out = []
+    for q in WATCHLIST.get("zintellect_queries", []):
+        data = urllib.parse.urlencode({
+            "draw": "1", "start": "0", "length": "25",
+            "search[value]": q, "search[regex]": "false",
+        }).encode()
+        req = urllib.request.Request(
+            "https://www.zintellect.com/Catalog/Index_DataTableResult",
+            data=data, headers={
+                "User-Agent": "job-watch/1.0",
+                "Content-Type": "application/x-www-form-urlencoded",
+                "X-Requested-With": "XMLHttpRequest"})
+        try:
+            with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+                payload = json.loads(r.read())
+        except Exception:
+            continue
+        for j in payload.get("data", []):
+            ref = j.get("referenceCode", "")
+            if not ref:
+                continue
+            out.append({
+                "title": j.get("title", ""), "ats": "zintellect",
+                "url": f"https://www.zintellect.com/Opportunity/Details/{ref}",
+                "location": j.get("location", ""),
+                "company": f"ORISE ({j.get('posted', '')})",
+                "body": ""})
+    return out
+
+
 def adzuna():
     app_id = os.environ.get("ADZUNA_APP_ID", "")
     app_key = os.environ.get("ADZUNA_APP_KEY", "")
@@ -177,17 +212,52 @@ LOC_RE = re.compile("|".join(
     if WATCHLIST.get("preferred_locations") else None
 
 
+DOMAIN_RE = re.compile("|".join(re.escape(k) for k in
+                       WATCHLIST.get("domain_keywords", [])), re.I) \
+    if WATCHLIST.get("domain_keywords") else None
+YEARS_RE = re.compile(r"(\d+)\+?\s*(?:or more\s+)?years?", re.I)
+PHD_RE = re.compile(r"ph\.?d\.?", re.I)
+TAG_RE = re.compile(r"<[^>]+>")
+
+
 def score(job):
-    """(relevant, senior_flag, location_match) for digest ordering."""
+    """Return (relevant, senior, loc_match, domain_hits, level_hint)."""
     title = job["title"]
     relevant = bool(KEY_RE.search(title)) and not (
         EXCLUDE_RE and EXCLUDE_RE.search(title))
     senior = bool(SEN_RE.search(title))
     loc_match = bool(LOC_RE and LOC_RE.search(job.get("location", "")))
-    return relevant, senior, loc_match
+
+    body = TAG_RE.sub(" ", job.get("body", ""))
+    hits = sorted({m.lower() for m in DOMAIN_RE.findall(body)})[:6] \
+        if DOMAIN_RE else []
+
+    years = [int(y) for y in YEARS_RE.findall(body) if int(y) <= 15]
+    level = []
+    if years:
+        level.append(f"{max(years)}+ yrs")
+    if PHD_RE.search(body):
+        phd_ctx = body[max(0, PHD_RE.search(body).start() - 100):
+                       PHD_RE.search(body).end() + 100].lower()
+        level.append("PhD preferred" if "prefer" in phd_ctx or
+                     "or equivalent" in phd_ctx else "PhD")
+    return relevant, senior, loc_match, hits, level
 
 
-def notify(count):
+def notify(count, new_relevant_titles, digest_path):
+    hook = os.environ.get("JOB_WATCH_WEBHOOK", "")
+    if hook and count:
+        payload = json.dumps({
+            "text": f"job-watch: {count} new relevant posting(s)",
+            "digest": str(digest_path),
+            "titles": new_relevant_titles[:10]}).encode()
+        try:
+            urllib.request.urlopen(urllib.request.Request(
+                hook, data=payload,
+                headers={"Content-Type": "application/json"}),
+                timeout=TIMEOUT)
+        except Exception:
+            pass
     if os.environ.get("JOB_WATCH_NOTIFY", "1") == "0" or count == 0:
         return
     if sys.platform != "darwin":
@@ -212,14 +282,18 @@ def main():
                 print(f"{r['name']:25} {board}")
         return
 
-    all_jobs = []
+    all_jobs, probed = [], set()
     with ThreadPoolExecutor(max_workers=10) as ex:
         futs = {ex.submit(discover_company, c): c
                 for c in WATCHLIST["companies"]}
         for fut in as_completed(futs):
-            all_jobs.extend(fut.result()["jobs"])
+            r = fut.result()
+            all_jobs.extend(r["jobs"])
+            if r["ats"]:
+                probed.add(r["name"])
 
-    for source, fn in (("adzuna", adzuna), ("serpapi", serpapi)):
+    for source, fn in (("zintellect", zintellect),
+                       ("adzuna", adzuna), ("serpapi", serpapi)):
         try:
             jobs = fn()
             if jobs:
@@ -241,11 +315,15 @@ def main():
             SEEN[j["url"]] = {"first_seen": today, "last_seen": today}
             new_jobs.append(j)
 
-    # A posting is closed if we recorded it before and it is absent today.
+    # A posting is closed if its company's board answered this run and
+    # the posting is absent. Boards that failed to answer are skipped to
+    # avoid mass false-closures on transient errors.
     closed = [{"title": m.get("title", url), "url": url,
                "company": m.get("company", "?")}
               for url, m in SEEN.items()
-              if url not in current_urls and m.get("source") == "watchlist"]
+              if url not in current_urls
+              and m.get("source") == "watchlist"
+              and m.get("company") in probed]
     # Drop closed entries older than 60 days from state to bound file size.
     for url, m in list(SEEN.items()):
         if url not in current_urls and m.get("last_seen", today) < today \
@@ -263,8 +341,9 @@ def main():
     relevant = [(j, *score(j)) for j in report]
     relevant = [x for x in relevant if x[1]]
     # Ordering: attainable first (no seniority flag), local/remote first,
-    # then alpha by company. Seniority-flagged roles sink to the bottom.
-    relevant.sort(key=lambda x: (x[2], not x[3], x[0]["company"], x[0]["title"]))
+    # then most domain-keyword overlap, then alpha by company.
+    relevant.sort(key=lambda x: (x[2], not x[3], -len(x[4]),
+                                 x[0]["company"], x[0]["title"]))
 
     n_new_relevant = sum(1 for j in new_jobs if score(j)[0])
 
@@ -273,15 +352,19 @@ def main():
              f"Open across boards: {len(all_jobs)} | "
              f"Closed since last seen: {len(closed)}", ""]
     lines.append("## New relevant postings\n")
-    for j, _, senior, loc_match in relevant:
+    for j, _, senior, loc_match, hits, level in relevant:
         flags = []
         if senior:
             flags.append("seniority")
         if loc_match:
             flags.append("location match")
         flag = f" *({', '.join(flags)})*" if flags else ""
+        meta = ""
+        if level or hits:
+            meta = " `" + " · ".join(
+                ([", ".join(level)] if level else []) + hits) + "`"
         lines.append(f"- [{j['company']}] [{j['title']}]"
-                     f"({j['url']}) — {j.get('location', '')}{flag}")
+                     f"({j['url']}) — {j.get('location', '')}{flag}{meta}")
     if closed:
         lines += ["", "## Closed since last check\n"]
         lines += [f"- [{c['company']}] {c['title']}" for c in closed[:20]]
@@ -291,7 +374,7 @@ def main():
     digest = "\n".join(lines)
     out = HERE / f"digest-{today}.md"
     out.write_text(digest)
-    notify(n_new_relevant)
+    notify(n_new_relevant, [j["title"] for j, *_ in relevant], out)
     if not quiet:
         print(digest)
 
