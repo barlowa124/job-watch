@@ -337,7 +337,17 @@ def main():
 
     SEEN_PATH.write_text(json.dumps(SEEN, indent=1, sort_keys=True))
 
-    report = all_jobs if show_all else new_jobs
+    since = None
+    for i, a in enumerate(sys.argv):
+        if a == "--since" and i + 1 < len(sys.argv):
+            since = sys.argv[i + 1]
+    if since:
+        report = [j for j in all_jobs
+                  if SEEN.get(j["url"], {}).get("first_seen", "") >= since]
+    elif show_all:
+        report = all_jobs
+    else:
+        report = new_jobs
     relevant = [(j, *score(j)) for j in report]
     relevant = [x for x in relevant if x[1]]
     # Ordering: attainable first (no seniority flag), local/remote first,

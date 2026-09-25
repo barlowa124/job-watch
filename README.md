@@ -31,7 +31,19 @@ python3 check_jobs.py            # digest of new postings
 python3 check_jobs.py --all      # everything currently open
 python3 check_jobs.py --probe    # which ATS answered per company
 python3 check_jobs.py --quiet    # write digest file only
+python3 check_jobs.py --since 2026-09-01   # postings first seen after a date
 ```
+
+Discover boards for new companies:
+
+```
+python3 resolve_boards.py believermeats.com meatable.com
+```
+
+It fetches each domain's careers page, extracts ATS links
+(Greenhouse/Lever/Ashby/Workable/SmartRecruiters/BambooHR/Workday), and
+verifies candidates against the APIs. Paste verified slugs into
+`watchlist.json`.
 
 Output: `digest-YYYY-MM-DD.md`. State: `seen.json`.
 
