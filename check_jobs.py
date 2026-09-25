@@ -113,7 +113,9 @@ def discover_company(company):
     for slug in company["slugs"]:
         for ats in order:
             jobs = PROBES[ats](slug)
-            if jobs:
+            # [] means the board exists but is empty (all three ATSs
+            # 404 on bad slugs); None means no such board.
+            if jobs is not None:
                 for j in jobs:
                     j["company"] = company["name"]
                     j["ats"] = ats
@@ -335,7 +337,9 @@ def main():
             SEEN[j["url"]].update({"title": j["title"], "company": j["company"],
                                    "source": "watchlist" if j["ats"] in PROBES else j["ats"]})
 
-    SEEN_PATH.write_text(json.dumps(SEEN, indent=1, sort_keys=True))
+    tmp = SEEN_PATH.with_suffix(".tmp")
+    tmp.write_text(json.dumps(SEEN, indent=1, sort_keys=True))
+    os.replace(tmp, SEEN_PATH)
 
     since = None
     for i, a in enumerate(sys.argv):

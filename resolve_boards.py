@@ -55,8 +55,11 @@ def verify(ats, slug):
         data = json.loads(body)
     except Exception:
         return None
-    n = len(data.get("jobs", data if isinstance(data, list) else []))
-    return n
+    if isinstance(data, dict):
+        data = data.get("jobs")
+    if not isinstance(data, list):
+        return None
+    return len(data)
 
 
 def resolve(domain):
