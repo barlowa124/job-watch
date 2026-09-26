@@ -113,6 +113,19 @@ class ScoreTests(unittest.TestCase):
         self.assertTrue(cj.score(self._job("Senior Data Scientist"))[1])
         self.assertFalse(cj.score(self._job("Data Scientist"))[1])
 
+    def test_seniority_abbrev_with_period(self):
+        # \b fails after a literal '.', so "sr." needs the lookaround path.
+        self.assertTrue(cj.score(self._job("Sr. Scientist, Protein Eng"))[1])
+        self.assertTrue(cj.score(self._job("Sr Machine Learning Eng"))[1])
+        self.assertFalse(cj.score(self._job("Scientist, Protein Eng"))[1])
+
+    def test_seniority_not_substring(self):
+        # 'lead' inside 'leadership' must not flag; title stays relevant via
+        # 'engineer' but non-senior.
+        s = cj.score(self._job("Team Leadership Engineer"))
+        self.assertTrue(s[0])
+        self.assertFalse(s[1])
+
     def test_location_match_word_boundary(self):
         self.assertTrue(cj.score(self._job("X", loc="Raleigh, NC"))[2])
         self.assertFalse(cj.score(self._job("X", loc="San Francisco"))[2])
