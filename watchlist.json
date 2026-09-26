@@ -1,95 +1,448 @@
 {
-  "companies": [
-    {"name": "Just Food Company", "slugs": ["justfoodcompany"], "ats": "greenhouse", "tags": ["alt-protein", "protein-ml"]},
-    {"name": "Xaira Therapeutics", "slugs": ["xairatherapeutics"], "ats": "greenhouse", "tags": ["ai-drug-discovery"]},
-    {"name": "Manifold Bio", "slugs": ["manifoldbio"], "ats": "greenhouse", "tags": ["protein-ml"]},
-    {"name": "Dyno Therapeutics", "slugs": ["dynotherapeutics"], "ats": "greenhouse", "tags": ["aav", "protein-ml"]},
-    {"name": "Vivodyne", "slugs": ["vivodyne"], "ats": "greenhouse", "tags": ["organoid"]},
-    {"name": "Axle Informatics", "slugs": ["axle"], "ats": "greenhouse", "tags": ["nih", "organoid"]},
-    {"name": "Recursion", "slugs": ["recursionpharmaceuticals"], "ats": "greenhouse", "tags": ["ai-drug-discovery"]},
-    {"name": "CZ Biohub", "slugs": ["biohub"], "ats": "greenhouse", "tags": ["ai-bio", "institute"]},
-    {"name": "Terray", "slugs": ["terray", "terraytx"], "tags": ["ai-drug-discovery"]},
-    {"name": "Insitro", "slugs": ["insitro"], "ats": "ashby", "tags": ["ai-drug-discovery"]},
-    {"name": "Generate Biomedicines", "slugs": ["generatebiomedicines"], "ats": "greenhouse", "tags": ["protein-ml"]},
-    {"name": "Chai Discovery", "slugs": ["chaidiscovery"], "ats": "ashby", "tags": ["protein-ml"]},
-    {"name": "EvolutionaryScale", "slugs": ["evolutionaryscale"], "tags": ["protein-ml"]},
-    {"name": "Nomic Bio", "slugs": ["nomic"], "ats": "ashby", "tags": ["proteomics"]},
-    {"name": "UPSIDE Foods", "slugs": ["upside"], "ats": "ashby", "tags": ["cultivated-meat"]},
-    {"name": "Shiru", "slugs": ["shiru"], "ats": "lever", "tags": ["alt-protein", "protein-ml"]},
-    {"name": "Believer Meats", "slugs": ["believermeats"], "tags": ["cultivated-meat"]},
-    {"name": "Wildtype", "slugs": ["wildtype", "wildtypefoods"], "tags": ["cultivated-meat"]},
-    {"name": "BlueNalu", "slugs": ["bluenalu"], "tags": ["cultivated-meat"]},
-    {"name": "Meatable", "slugs": ["meatable"], "tags": ["cultivated-meat"]},
-    {"name": "Pow.Bio", "slugs": ["powbio", "pow.bio"], "tags": ["biomanufacturing"]},
-    {"name": "Invert", "slugs": ["invert"], "ats": "ashby", "tags": ["bioprocess-ml"]},
-    {"name": "Cradle", "slugs": ["cradlebio"], "ats": "ashby", "tags": ["protein-ml"]},
-    {"name": "Tamarind Bio", "slugs": ["tamarindbio"], "ats": "ashby", "tags": ["compbio"]},
-    {"name": "Emulate", "slugs": ["emulate", "emulateinc"], "tags": ["nams", "organ-chip"]},
-    {"name": "CN Bio", "slugs": ["cnbio", "cn-bio"], "tags": ["nams", "organ-chip"]},
-    {"name": "MIMETAS", "slugs": ["mimetas"], "tags": ["nams", "organoid"]},
-    {"name": "Good Food Institute", "slugs": ["gfi", "thegoodfoodinstitute"], "tags": ["alt-protein"]},
-    {"name": "New Harvest", "slugs": ["newharvest"], "tags": ["cultivated-meat"]},
-    {"name": "Basecamp Research", "slugs": ["basecamp-research"], "ats": "ashby", "tags": ["protein-ml"]},
-    {"name": "Culture Biosciences", "slugs": ["culturebiosciences"], "ats": "greenhouse", "tags": ["biomanufacturing"]}
-  ],
-  "adzuna_queries": [
-    "machine learning protein scientist",
-    "computational toxicology",
-    "bioinformatics machine learning",
-    "research engineer scientific machine learning",
-    "cultivated meat data science"
-  ],
-  "serpapi_queries": [
-    "machine learning engineer protein design",
-    "scientific machine learning engineer biotech"
-  ],
-  "zintellect_queries": [
-    "computational toxicology",
-    "machine learning",
-    "bioinformatics",
-    "new approach methods",
-    "data science"
-  ],
-  "domain_keywords": [
-    "pytorch", "jax", "tensorflow", "active learning", "bayesian",
-    "conformal", "protein", "multi-omic", "omics", "toxicolog",
-    "organoid", "diffusion", "language model", "llm", "bioinformatic",
-    "cheminformatic", "fermentation", "bioprocess", "transcriptom",
-    "genomic", "uncertainty", "reinforcement", "graph neural",
-    "molecular", "assay", "high-throughput", "food science"
-  ],
-  "manual_check_urls": [
-    "https://www.fsi.org/careers",
-    "https://www.pow.bio/ (careers section)",
-    "https://believermeats.com/careers (BambooHR)",
-    "https://www.mimetas.com/en/careers",
-    "https://meatable.com/careers/",
-    "https://www.cn-bio.com/careers/",
-    "https://emulatebio.com/careers/",
-    "https://www.evolutionaryscale.ai/",
-    "https://www.gfi.org/careers",
-    "https://new-harvest.org/opportunities/"
-  ],
-  "relevance_keywords": [
-    "machine learning", "ml ", "research engineer", "data scien",
-    "bioinformatic", "computational", "protein", "scientist",
-    "ai ", "deep learning", "data engineer", "software engineer",
-    "engineer", "developer", "intern", "data analyst", "informatics"
-  ],
-  "seniority_flags": [
-    "senior", "sr.", "staff", "principal", "director", "lead", "head",
-    "manager", "phd"
-  ],
-  "exclude_title_keywords": [
-    "account", "finance", "contract", "counsel", "legal", "hr ", "people",
-    "recruit", "talent", "sales", "marketing", "gtm", "business develop",
-    "administrat", "coordinator", "executive assist", "office",
-    "facilit", "nurse", "physician", "medical monitor", "entomolog",
-    "biolog", "chemist", "lab associate", "research associate",
-    "pharmacology", "clinical", "biostatistic", "regulatory", "quality"
-  ],
-  "preferred_locations": [
-    "remote", "raleigh", "durham", "research triangle", "rtp",
-    "north carolina", "nc"
-  ]
+ "companies": [
+  {
+   "name": "Just Food Company",
+   "slugs": [
+    "justfoodcompany"
+   ],
+   "ats": "greenhouse",
+   "tags": [
+    "alt-protein",
+    "protein-ml"
+   ]
+  },
+  {
+   "name": "Xaira Therapeutics",
+   "slugs": [
+    "xairatherapeutics"
+   ],
+   "ats": "greenhouse",
+   "tags": [
+    "ai-drug-discovery"
+   ]
+  },
+  {
+   "name": "Manifold Bio",
+   "slugs": [
+    "manifoldbio"
+   ],
+   "ats": "greenhouse",
+   "tags": [
+    "protein-ml"
+   ]
+  },
+  {
+   "name": "Dyno Therapeutics",
+   "slugs": [
+    "dynotherapeutics"
+   ],
+   "ats": "greenhouse",
+   "tags": [
+    "aav",
+    "protein-ml"
+   ]
+  },
+  {
+   "name": "Vivodyne",
+   "slugs": [
+    "vivodyne"
+   ],
+   "ats": "greenhouse",
+   "tags": [
+    "organoid"
+   ]
+  },
+  {
+   "name": "Axle Informatics",
+   "slugs": [
+    "axle"
+   ],
+   "ats": "greenhouse",
+   "tags": [
+    "nih",
+    "organoid"
+   ]
+  },
+  {
+   "name": "Recursion",
+   "slugs": [
+    "recursionpharmaceuticals"
+   ],
+   "ats": "greenhouse",
+   "tags": [
+    "ai-drug-discovery"
+   ]
+  },
+  {
+   "name": "CZ Biohub",
+   "slugs": [
+    "biohub"
+   ],
+   "ats": "greenhouse",
+   "tags": [
+    "ai-bio",
+    "institute"
+   ]
+  },
+  {
+   "name": "Terray",
+   "slugs": [
+    "terray",
+    "terraytx"
+   ],
+   "tags": [
+    "ai-drug-discovery"
+   ]
+  },
+  {
+   "name": "Insitro",
+   "slugs": [
+    "insitro"
+   ],
+   "ats": "ashby",
+   "tags": [
+    "ai-drug-discovery"
+   ]
+  },
+  {
+   "name": "Generate Biomedicines",
+   "slugs": [
+    "generatebiomedicines"
+   ],
+   "ats": "greenhouse",
+   "tags": [
+    "protein-ml"
+   ]
+  },
+  {
+   "name": "Chai Discovery",
+   "slugs": [
+    "chaidiscovery"
+   ],
+   "ats": "ashby",
+   "tags": [
+    "protein-ml"
+   ]
+  },
+  {
+   "name": "EvolutionaryScale",
+   "slugs": [
+    "evolutionaryscale"
+   ],
+   "tags": [
+    "protein-ml"
+   ]
+  },
+  {
+   "name": "Nomic Bio",
+   "slugs": [
+    "nomic"
+   ],
+   "ats": "ashby",
+   "tags": [
+    "proteomics"
+   ]
+  },
+  {
+   "name": "UPSIDE Foods",
+   "slugs": [
+    "upside"
+   ],
+   "ats": "ashby",
+   "tags": [
+    "cultivated-meat"
+   ]
+  },
+  {
+   "name": "Shiru",
+   "slugs": [
+    "shiru"
+   ],
+   "ats": "lever",
+   "tags": [
+    "alt-protein",
+    "protein-ml"
+   ]
+  },
+  {
+   "name": "Believer Meats",
+   "slugs": [
+    "believermeats"
+   ],
+   "tags": [
+    "cultivated-meat"
+   ]
+  },
+  {
+   "name": "Wildtype",
+   "slugs": [
+    "wildtype",
+    "wildtypefoods"
+   ],
+   "tags": [
+    "cultivated-meat"
+   ]
+  },
+  {
+   "name": "BlueNalu",
+   "slugs": [
+    "bluenalu"
+   ],
+   "tags": [
+    "cultivated-meat"
+   ]
+  },
+  {
+   "name": "Meatable",
+   "slugs": [
+    "meatable"
+   ],
+   "tags": [
+    "cultivated-meat"
+   ]
+  },
+  {
+   "name": "Pow.Bio",
+   "slugs": [
+    "powbio",
+    "pow.bio"
+   ],
+   "tags": [
+    "biomanufacturing"
+   ]
+  },
+  {
+   "name": "Invert",
+   "slugs": [
+    "invert"
+   ],
+   "ats": "ashby",
+   "tags": [
+    "bioprocess-ml"
+   ]
+  },
+  {
+   "name": "Cradle",
+   "slugs": [
+    "cradlebio"
+   ],
+   "ats": "ashby",
+   "tags": [
+    "protein-ml"
+   ]
+  },
+  {
+   "name": "Tamarind Bio",
+   "slugs": [
+    "tamarindbio"
+   ],
+   "ats": "ashby",
+   "tags": [
+    "compbio"
+   ]
+  },
+  {
+   "name": "Emulate",
+   "slugs": [
+    "emulate",
+    "emulateinc"
+   ],
+   "tags": [
+    "nams",
+    "organ-chip"
+   ]
+  },
+  {
+   "name": "CN Bio",
+   "slugs": [
+    "cnbio",
+    "cn-bio"
+   ],
+   "tags": [
+    "nams",
+    "organ-chip"
+   ]
+  },
+  {
+   "name": "MIMETAS",
+   "slugs": [
+    "mimetas"
+   ],
+   "tags": [
+    "nams",
+    "organoid"
+   ]
+  },
+  {
+   "name": "Good Food Institute",
+   "slugs": [
+    "gfi",
+    "thegoodfoodinstitute"
+   ],
+   "tags": [
+    "alt-protein"
+   ]
+  },
+  {
+   "name": "New Harvest",
+   "slugs": [
+    "newharvest"
+   ],
+   "tags": [
+    "cultivated-meat"
+   ]
+  },
+  {
+   "name": "Basecamp Research",
+   "slugs": [
+    "basecamp-research"
+   ],
+   "ats": "ashby",
+   "tags": [
+    "protein-ml"
+   ]
+  },
+  {
+   "name": "Culture Biosciences",
+   "slugs": [
+    "culturebiosciences"
+   ],
+   "ats": "greenhouse",
+   "tags": [
+    "biomanufacturing"
+   ]
+  }
+ ],
+ "adzuna_queries": [
+  "machine learning protein scientist",
+  "computational toxicology",
+  "bioinformatics machine learning",
+  "research engineer scientific machine learning",
+  "cultivated meat data science"
+ ],
+ "serpapi_queries": [
+  "machine learning engineer protein design",
+  "scientific machine learning engineer biotech"
+ ],
+ "zintellect_queries": [
+  "computational toxicology",
+  "machine learning",
+  "bioinformatics",
+  "new approach methods",
+  "data science"
+ ],
+ "domain_keywords": [
+  "pytorch",
+  "jax",
+  "tensorflow",
+  "active learning",
+  "bayesian",
+  "conformal",
+  "protein",
+  "multi-omic",
+  "omics",
+  "toxicolog",
+  "organoid",
+  "diffusion",
+  "language model",
+  "llm",
+  "bioinformatic",
+  "cheminformatic",
+  "fermentation",
+  "bioprocess",
+  "transcriptom",
+  "genomic",
+  "uncertainty",
+  "reinforcement",
+  "graph neural",
+  "molecular",
+  "assay",
+  "high-throughput",
+  "food science"
+ ],
+ "manual_check_urls": [
+  "https://www.fsi.org/careers",
+  "https://www.pow.bio/ (careers section)",
+  "https://believermeats.com/careers (BambooHR)",
+  "https://www.mimetas.com/en/careers",
+  "https://meatable.com/careers/",
+  "https://www.cn-bio.com/careers/",
+  "https://emulatebio.com/careers/",
+  "https://www.evolutionaryscale.ai/",
+  "https://www.gfi.org/careers",
+  "https://new-harvest.org/opportunities/"
+ ],
+ "relevance_keywords": [
+  "machine learning",
+  "ml ",
+  "research engineer",
+  "data scien",
+  "bioinformatic",
+  "computational",
+  "protein",
+  "scientist",
+  "ai ",
+  "deep learning",
+  "data engineer",
+  "software engineer",
+  "engineer",
+  "developer",
+  "intern",
+  "data analyst",
+  "informatics"
+ ],
+ "seniority_flags": [
+  "senior",
+  "sr.",
+  "sr",
+  "staff",
+  "principal",
+  "director",
+  "lead",
+  "head",
+  "manager",
+  "phd"
+ ],
+ "exclude_title_keywords": [
+  "account",
+  "finance",
+  "contract",
+  "counsel",
+  "legal",
+  "hr ",
+  "people",
+  "recruit",
+  "talent",
+  "sales",
+  "marketing",
+  "gtm",
+  "business develop",
+  "administrat",
+  "coordinator",
+  "executive assist",
+  "office",
+  "facilit",
+  "nurse",
+  "physician",
+  "medical monitor",
+  "entomolog",
+  "biolog",
+  "chemist",
+  "lab associate",
+  "research associate",
+  "pharmacology",
+  "clinical",
+  "biostatistic",
+  "regulatory",
+  "quality"
+ ],
+ "preferred_locations": [
+  "remote",
+  "raleigh",
+  "durham",
+  "research triangle",
+  "rtp",
+  "north carolina",
+  "nc"
+ ]
 }

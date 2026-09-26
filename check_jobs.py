@@ -216,8 +216,17 @@ KEY_RE = re.compile("|".join(re.escape(k)
 EXCLUDE_RE = re.compile("|".join(re.escape(k) for k in
                         WATCHLIST.get("exclude_title_keywords", [])), re.I) \
     if WATCHLIST.get("exclude_title_keywords") else None
-SEN_RE = re.compile(r"\b(" + "|".join(
-    k.replace(".", r"\.") for k in WATCHLIST["seniority_flags"]) + r")\b", re.I)
+def _keyword_pat(k):
+    """Boundary-aware pattern. \b fails after non-word chars, so a flag like
+    'sr.' never matched 'Sr. ' under \b(...)\b. Use lookarounds instead."""
+    pat = re.escape(k)
+    pre = r"\b" if k[0].isalnum() else r"(?<!\w)"
+    post = r"\b" if k[-1].isalnum() else r"(?!\w)"
+    return pre + pat + post
+
+
+SEN_RE = re.compile("|".join(
+    _keyword_pat(k) for k in WATCHLIST["seniority_flags"]), re.I)
 LOC_RE = re.compile("|".join(
     r"\b" + re.escape(k) + r"\b"
     for k in WATCHLIST.get("preferred_locations", [])), re.I) \
