@@ -311,6 +311,82 @@
    "tags": [
     "biomanufacturing"
    ]
+  },
+  {
+   "name": "Altis Biosystems",
+   "slugs": [
+    "altis"
+   ],
+   "ats": "ashby",
+   "tags": [
+    "nam",
+    "organoid"
+   ]
+  },
+  {
+   "name": "Vow",
+   "slugs": [
+    "vow"
+   ],
+   "ats": "ashby",
+   "tags": [
+    "alt-protein",
+    "cultivated-meat"
+   ]
+  },
+  {
+   "name": "Prolific Machines",
+   "slugs": [
+    "prolific-machines"
+   ],
+   "ats": "lever",
+   "tags": [
+    "bioprocess",
+    "protein-ml"
+   ]
+  },
+  {
+   "name": "EVERY",
+   "slugs": [
+    "theeverycompany"
+   ],
+   "ats": "greenhouse",
+   "tags": [
+    "alt-protein",
+    "fermentation"
+   ]
+  },
+  {
+   "name": "Pivot Bio",
+   "slugs": [
+    "pivotbio"
+   ],
+   "ats": "greenhouse",
+   "tags": [
+    "ag-ml"
+   ]
+  },
+  {
+   "name": "Ginkgo Bioworks",
+   "slugs": [
+    "ginkgobioworks"
+   ],
+   "ats": "greenhouse",
+   "tags": [
+    "techbio",
+    "synthetic-bio"
+   ]
+  },
+  {
+   "name": "Isomorphic Labs",
+   "slugs": [
+    "isomorphiclabs"
+   ],
+   "ats": "greenhouse",
+   "tags": [
+    "ai-drug-discovery",
+    "protein-ml"
+   ]
   }
  ],
  "adzuna_queries": [
@@ -370,7 +446,29 @@
   "https://emulatebio.com/careers/",
   "https://www.evolutionaryscale.ai/",
   "https://www.gfi.org/careers",
-  "https://new-harvest.org/opportunities/"
+  "https://new-harvest.org/opportunities/",
+  "https://inari.wd108.myworkdayjobs.com/Inari_Careers (Workday; ag ML + gene editing, Cambridge/Ghent)",
+  "https://www.lhasalimited.org/careers/ (comp-tox NAM charity; remote AI eng roles appear here)",
+  "https://www.simulations-plus.com/about/careers/ (ADMET/DILIsym/NAMVantage; remote; under Altaris acquisition)",
+  "https://multus.bio/careers/ (Notion page; AI growth-media optimization for cultivated meat)",
+  "https://impossiblefoods.com/careers (Workday; alt-protein data science)",
+  "https://mosameat.com/careers",
+  "https://aleph-farms.com/careers",
+  "https://www.goodmeat.co/careers",
+  "https://perfectday.com/careers",
+  "https://www.protera.bio/careers (protein design for food)",
+  "https://notco.com/en-us/careers",
+  "https://www.remilk.com/careers",
+  "https://careers.unilever.com/ (watch for SEAC / non-animal safety science roles)",
+  "https://www.certara.com/company/careers/",
+  "https://hesperosinc.com/",
+  "https://www.scitovation.com/",
+  "https://insphero.com/careers/",
+  "https://www.arzeda.com/careers/",
+  "https://cambrium.com/careers",
+  "https://www.amsilk.com/en/careers/",
+  "https://spiber.inc/en/careers/",
+  "https://www.geltor.com/careers"
  ],
  "relevance_keywords": [
   "machine learning",
@@ -478,7 +576,14 @@
   "dyno": "red| capsid ML feeds in-vivo validation pipeline",
   "mammoth": "red| in-vivo therapeutic work",
   "genentech": "red| pharma; animal studies",
-  "eli lilly": "red| pharma; animal studies"
+  "eli lilly": "red| pharma; animal studies",
+  "altis biosystems": "aligned| RepliGut human intestinal tissue models - NAM",
+  "vow": "aligned| cultivated meat",
+  "prolific machines": "aligned| optogenetics biomanufacturing, no animal pipeline",
+  "every": "aligned| precision-fermentation egg proteins replacing animal products",
+  "pivot bio": "gray| nitrogen-fixing microbes replace synthetic fertilizer; row-crop output partly feeds livestock supply chain",
+  "ginkgo bioworks": "gray| cell foundry; defense contracts and pharma clients",
+  "isomorphic labs": "red| alphabet drug discovery; compute feeds pharma preclinical animal pipeline"
  },
  "animal_keywords": [
   "in vivo",
