@@ -156,5 +156,39 @@ class ScoreTests(unittest.TestCase):
         self.assertIn("protein", hits)
 
 
+class FlagTests(unittest.TestCase):
+
+    def _job(self, company, body=""):
+        return {"title": "Scientist", "location": "", "body": body,
+                "company": company, "url": "u", "ats": "test"}
+
+    def test_ethics_flag_from_company(self):
+        fl = cj.flags_for(self._job("Manifold Bio"))
+        self.assertIn("ethics:red", fl)
+
+    def test_ethics_aligned(self):
+        fl = cj.flags_for(self._job("Just Food Company"))
+        self.assertIn("ethics:aligned", fl)
+
+    def test_ethics_unknown_company_no_flag(self):
+        fl = cj.flags_for(self._job("Acme Random Corp"))
+        self.assertNotIn("ethics:red", fl)
+
+    def test_animal_language_in_body(self):
+        fl = cj.flags_for(
+            self._job("Acme", body="validated in mouse model studies"))
+        self.assertIn("in vivo in JD", fl)
+
+    def test_intensity_tells(self):
+        fl = cj.flags_for(
+            self._job("Acme", body="we are high-agency and move fast"))
+        self.assertIn("intensity tells", fl)
+
+    def test_clean_job_no_flags(self):
+        fl = cj.flags_for(self._job("Tamarind Bio", body="pure software"))
+        self.assertNotIn("in vivo in JD", fl)
+        self.assertNotIn("intensity tells", fl)
+
+
 if __name__ == "__main__":
     unittest.main()

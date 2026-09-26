@@ -236,6 +236,13 @@ LOC_RE = re.compile("|".join(
 DOMAIN_RE = re.compile("|".join(re.escape(k) for k in
                        WATCHLIST.get("domain_keywords", [])), re.I) \
     if WATCHLIST.get("domain_keywords") else None
+ANIMAL_RE = re.compile("|".join(re.escape(k) for k in
+                       WATCHLIST.get("animal_keywords", [])), re.I) \
+    if WATCHLIST.get("animal_keywords") else None
+INTENSITY_RE = re.compile("|".join(re.escape(k) for k in
+                          WATCHLIST.get("intensity_keywords", [])), re.I) \
+    if WATCHLIST.get("intensity_keywords") else None
+ETHICS = {k.lower(): v for k, v in WATCHLIST.get("ethics", {}).items()}
 YEARS_RE = re.compile(r"(\d+)\+?\s*(?:or more\s+)?years?", re.I)
 PHD_RE = re.compile(r"ph\.?d\.?", re.I)
 TAG_RE = re.compile(r"<[^>]+>")
@@ -263,6 +270,27 @@ def score(job):
         level.append("PhD preferred" if "prefer" in phd_ctx or
                      "or equivalent" in phd_ctx else "PhD")
     return relevant, senior, loc_match, hits, level
+
+
+def flags_for(job):
+    """Ethics and intensity annotation flags shown in the digest.
+
+    Ethics comes from a per-company classification in watchlist.json
+    (aligned/clean/gray/red on animal-testing exposure). Body regexes
+    catch in-vivo language and grind-culture tells per posting.
+    """
+    fl = []
+    comp = job.get("company", "").lower()
+    for key, v in ETHICS.items():
+        if key in comp:
+            fl.append(f"ethics:{v.split('|')[0].strip()}")
+            break
+    body = TAG_RE.sub(" ", job.get("body", ""))
+    if ANIMAL_RE and ANIMAL_RE.search(body):
+        fl.append("in vivo in JD")
+    if INTENSITY_RE and INTENSITY_RE.search(body):
+        fl.append("intensity tells")
+    return fl
 
 
 def notify(count, new_relevant_titles, digest_path):
@@ -386,11 +414,11 @@ def main():
              f"Closed since last seen: {len(closed)}", ""]
     lines.append("## New relevant postings\n")
     for j, _, senior, loc_match, hits, level in relevant:
-        flags = []
+        flags = flags_for(j)
         if senior:
-            flags.append("seniority")
+            flags.insert(0, "seniority")
         if loc_match:
-            flags.append("location match")
+            flags.insert(0, "location match")
         flag = f" *({', '.join(flags)})*" if flags else ""
         meta = ""
         if level or hits:
