@@ -1,2 +1,9 @@
 __pycache__/
 jobwatch.log
+/seen.json
+/seen.tmp
+/digest-*.md
+/manual-sweep-*.md
+/coverage-*.md
+/.env
+/.env.*

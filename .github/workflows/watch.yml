@@ -6,13 +6,15 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   watch:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-python@v5
         with:
@@ -26,12 +28,3 @@ jobs:
           JOB_WATCH_NOTIFY: "0"
           JOB_WATCH_WEBHOOK: ${{ secrets.JOB_WATCH_WEBHOOK }}
         run: python3 check_jobs.py --quiet
-
-      - name: Commit state and digest
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add seen.json digest-*.md
-          git diff --cached --quiet && exit 0
-          git commit -m "job-watch digest $(date +%F)"
-          git push

@@ -47,6 +47,9 @@ verifies candidates against the APIs. Paste verified slugs into
 
 Output: `digest-YYYY-MM-DD.md`. State: `seen.json`.
 
+Generated digests and tracking state stay local and are ignored by Git.
+Keep application notes and other personal records out of this public repository.
+
 ## Configuration
 
 `watchlist.json`:
@@ -86,10 +89,15 @@ the scoring and level heuristics. No network access required.
 ## Scheduled runs
 
 A launchd plist for weekly Monday 9 AM runs is in
-`deploy/com.user.jobwatch.plist`. A GitHub Actions workflow
-(`.github/workflows/watch.yml`) does the same weekly run in CI and
-commits `seen.json` plus the digest back to the repo, so it works with
-the laptop off. Install launchd:
+`deploy/com.user.jobwatch.plist`. Replace `/ABSOLUTE/PATH/TO/job-watch`
+with your checkout path in all three locations before installing it.
+The GitHub Actions workflow (`.github/workflows/watch.yml`) runs weekly
+with read-only repository access. It does not commit outputs or upload
+artifacts. Each CI run starts with empty tracking state, so deduplication
+across runs is available only when running locally. The configured webhook
+can receive notifications without publishing files to GitHub.
+
+Install launchd:
 
 ```
 cp deploy/com.user.jobwatch.plist ~/Library/LaunchAgents/
@@ -102,5 +110,7 @@ launchctl load ~/Library/LaunchAgents/com.user.jobwatch.plist
   targeted watchlist than scraping Indeed or LinkedIn. Neither has a
   public job-search API. Both block scraping. The aggregator integrations
   exist for the tail of the market.
-- `seen.json` and digest files are committed: they are the CI state and
-  a running log of what the watchlist produced.
+- `seen.json`, dated digests, manual-sweep notes and coverage logs are
+  local-only. Ignore rules prevent ordinary Git adds from tracking them.
+- Earlier commits may still contain records removed from the current tree.
+  Ignore rules and file removal do not erase Git history.
