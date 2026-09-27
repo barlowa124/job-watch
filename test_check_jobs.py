@@ -4,10 +4,39 @@
 Run: python3 -m unittest test_check_jobs -v
 """
 
+import json
+import re
+import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 import check_jobs as cj
+
+
+class WatchlistTests(unittest.TestCase):
+    def test_example_used_without_local_watchlist(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            example = {"companies": []}
+            (root / "watchlist.example.json").write_text(json.dumps(example))
+            self.assertEqual(cj.load_watchlist(root), example)
+
+    def test_local_watchlist_takes_precedence(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            local = {"companies": [{"name": "Example Company", "slugs": ["example"]}]}
+            (root / "watchlist.example.json").write_text('{"companies": []}')
+            (root / "watchlist.json").write_text(json.dumps(local))
+            self.assertEqual(cj.load_watchlist(root), local)
+
+    def test_invalid_local_watchlist_is_not_silently_replaced(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "watchlist.example.json").write_text('{"companies": []}')
+            (root / "watchlist.json").write_text('{')
+            with self.assertRaises(json.JSONDecodeError):
+                cj.load_watchlist(root)
 
 
 class ProbeTests(unittest.TestCase):
@@ -87,7 +116,8 @@ class ZintellectTests(unittest.TestCase):
             def __exit__(self, *a): return False
         import json
         body = json.dumps(self._opps()).encode()
-        with patch.object(urllib.request, "urlopen", return_value=R(body)):
+        with patch.dict(cj.WATCHLIST, {"zintellect_queries": ["example query"]}), \
+                patch.object(urllib.request, "urlopen", return_value=R(body)):
             jobs = cj.zintellect()
         self.assertEqual(len(jobs), 1)
         self.assertIn("EPA-ORD-2026-01", jobs[0]["url"])
@@ -127,8 +157,9 @@ class ScoreTests(unittest.TestCase):
         self.assertFalse(s[1])
 
     def test_location_match_word_boundary(self):
-        self.assertTrue(cj.score(self._job("X", loc="Raleigh, NC"))[2])
-        self.assertFalse(cj.score(self._job("X", loc="San Francisco"))[2])
+        with patch.object(cj, "LOC_RE", re.compile(r"\bremote\b", re.I)):
+            self.assertTrue(cj.score(self._job("X", loc="Remote"))[2])
+            self.assertFalse(cj.score(self._job("X", loc="Remoteville"))[2])
 
     def test_domain_hits_from_body(self):
         _, _, _, hits, _ = cj.score(
@@ -163,11 +194,13 @@ class FlagTests(unittest.TestCase):
                 "company": company, "url": "u", "ats": "test"}
 
     def test_ethics_flag_from_company(self):
-        fl = cj.flags_for(self._job("Manifold Bio"))
+        with patch.object(cj, "ETHICS", {"example excluded": "red|test fixture"}):
+            fl = cj.flags_for(self._job("Example Excluded Company"))
         self.assertIn("ethics:red", fl)
 
     def test_ethics_aligned(self):
-        fl = cj.flags_for(self._job("Just Food Company"))
+        with patch.object(cj, "ETHICS", {"example aligned": "aligned|test fixture"}):
+            fl = cj.flags_for(self._job("Example Aligned Company"))
         self.assertIn("ethics:aligned", fl)
 
     def test_ethics_unknown_company_no_flag(self):

@@ -1,0 +1,15 @@
+{
+  "companies": [],
+  "adzuna_queries": [],
+  "serpapi_queries": [],
+  "zintellect_queries": [],
+  "manual_check_urls": [],
+  "relevance_keywords": ["machine learning", "data scien", "engineer", "scientist", "protein"],
+  "exclude_title_keywords": ["finance", "recruiter", "account manager"],
+  "seniority_flags": ["senior", "sr.", "sr", "staff", "principal", "director", "lead", "head", "manager", "phd"],
+  "preferred_locations": ["remote"],
+  "domain_keywords": ["pytorch", "bayesian", "protein"],
+  "ethics": {},
+  "animal_keywords": ["in vivo", "mouse model"],
+  "intensity_keywords": ["high-agency", "move fast"]
+}

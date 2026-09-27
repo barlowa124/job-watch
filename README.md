@@ -26,6 +26,16 @@ No third-party dependencies. Python 3.9+.
 
 ## Usage
 
+Copy the neutral example to create a local watchlist:
+
+```sh
+cp watchlist.example.json watchlist.json
+```
+
+Edit `watchlist.json` with the companies and filters you want. This file is
+ignored by Git. Without it, the watcher loads `watchlist.example.json`,
+which has no companies or aggregator queries configured.
+
 ```
 python3 check_jobs.py            # digest of new postings
 python3 check_jobs.py --all      # everything currently open
@@ -93,7 +103,8 @@ A launchd plist for weekly Monday 9 AM runs is in
 with your checkout path in all three locations before installing it.
 The GitHub Actions workflow (`.github/workflows/watch.yml`) runs weekly
 with read-only repository access. It does not commit outputs or upload
-artifacts. Each CI run starts with empty tracking state, so deduplication
+artifacts. The public workflow uses the empty example watchlist.
+Each CI run starts with empty tracking state, so deduplication
 across runs is available only when running locally. The configured webhook
 can receive notifications without publishing files to GitHub.
 
@@ -110,7 +121,8 @@ launchctl load ~/Library/LaunchAgents/com.user.jobwatch.plist
   targeted watchlist than scraping Indeed or LinkedIn. Neither has a
   public job-search API. Both block scraping. The aggregator integrations
   exist for the tail of the market.
-- `seen.json`, dated digests, manual-sweep notes and coverage logs are
-  local-only. Ignore rules prevent ordinary Git adds from tracking them.
-- Earlier commits may still contain records removed from the current tree.
-  Ignore rules and file removal do not erase Git history.
+- `watchlist.json`, `seen.json`, dated digests, manual-sweep notes and
+  coverage logs are local-only. Ignore rules prevent ordinary Git adds
+  from tracking them.
+- Personal records were removed from the published branch history.
+  Existing clones and cached commit pages can retain older copies.

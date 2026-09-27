@@ -7,3 +7,4 @@ jobwatch.log
 /coverage-*.md
 /.env
 /.env.*
+/watchlist.json

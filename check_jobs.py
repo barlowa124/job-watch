@@ -45,7 +45,14 @@ if _env_file.exists():
             _k, _, _v = _line.partition("=")
             os.environ.setdefault(_k.strip(), _v.strip())
 
-WATCHLIST = json.loads((HERE / "watchlist.json").read_text())
+def load_watchlist(root):
+    path = root / "watchlist.json"
+    if not path.exists():
+        path = root / "watchlist.example.json"
+    return json.loads(path.read_text())
+
+
+WATCHLIST = load_watchlist(HERE)
 SEEN_PATH = HERE / "seen.json"
 _raw_seen = json.loads(SEEN_PATH.read_text()) if SEEN_PATH.exists() else {}
 SEEN = {url: (meta if isinstance(meta, dict)
