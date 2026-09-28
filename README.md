@@ -6,7 +6,7 @@ general job aggregator misses the niche.
 
 ## What it does
 
-- Probes Greenhouse, Lever, and Ashby public JSON APIs for each company
+- Probes Greenhouse, Lever and Ashby public JSON APIs for each company
   in `watchlist.json`. Board slugs do not need to be exact: the script
   tries each candidate slug against all three ATS endpoints and keeps the
   first that answers. Run `--probe` to see what resolved.
@@ -75,7 +75,7 @@ Keep application notes and other personal records out of this public repository.
 | `domain_keywords` | body keywords counted per posting and shown in the digest |
 | `manual_check_urls` | boards with no public API, listed at the digest bottom |
 
-Optional env vars — export them, or drop them in
+Optional env vars: export them, or drop them in
 `~/.config/job-watch/env` (one `KEY=value` per line, loaded at startup
 and by the launchd job):
 
