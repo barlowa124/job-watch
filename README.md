@@ -130,3 +130,11 @@ launchctl load ~/Library/LaunchAgents/com.user.jobwatch.plist
   from tracking them.
 - Personal records were removed from the published branch history.
   Existing clones and cached commit pages can retain older copies.
+
+## Related work
+
+- [vector-db-mcp](https://github.com/barlowa124/vector-db-mcp) is the
+  optional similarity backend: when `vector-db-mcp[embed]` is installed,
+  repost detection scores postings by E5 embedding cosine instead of
+  token overlap. The token scorer stays the default so the cron path
+  remains dependency-free.
