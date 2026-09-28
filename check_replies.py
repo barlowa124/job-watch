@@ -80,6 +80,7 @@ end tell
 
 DEFAULT_REJECTION_KEYWORDS = [
     "not move forward",
+    "not to move forward",
     "not be moving forward",
     "will not be moving forward",
     "won't be moving forward",
@@ -197,6 +198,8 @@ def classify(msg, cfg):
 
     is_employer = any(d in hay for d in cfg["employer"])
     is_bulk = any(d in hay for d in cfg["bulk"])
+    if is_bulk:
+        return None
     is_confirm = any(k in subj for k in cfg["confirm_kw"]) or any(
         k in body for k in cfg["confirm_kw"]
     )
@@ -211,7 +214,7 @@ def classify(msg, cfg):
         if not body:
             return "REPLY"
         return "CONFIRMATION" if is_confirm else "REPLY"
-    if is_replyish and not is_bulk and not is_confirm and not is_rejection:
+    if is_replyish and not is_confirm and not is_rejection:
         return "REPLY"
     return None
 

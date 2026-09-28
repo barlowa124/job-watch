@@ -9,8 +9,14 @@ import unittest
 import check_replies as cr
 
 CFG = {
-    "employer": ["iambictherapeutics.com", "ashbyhq.com", "teiko.bio"],
-    "bulk": ["linkedin.com", "newsletters"],
+    "employer": [
+        "iambictherapeutics.com",
+        "ashbyhq.com",
+        "teiko.bio",
+        "chaidiscovery.com",
+        "michaeljfox",
+    ],
+    "bulk": ["linkedin.com", "newsletters", "michaeljfox-email"],
     "reply_kw": ["interview", "next steps", "move forward"],
     "confirm_kw": ["thank you for applying", "received your application"],
     "reject_kw": cr.DEFAULT_REJECTION_KEYWORDS,
@@ -83,6 +89,35 @@ class EmployerBodyClassification(unittest.TestCase):
             "Acme Recruiting <recruiting@iambictherapeutics.com>",
             "Next steps for your application",
             INTERVIEW_BODY,
+        )
+        self.assertEqual(cr.classify(m, CFG), "REPLY")
+
+    def test_application_variant_rejection(self):
+        # Chai's phrasing: "decided not to move forward with your application"
+        m = msg(
+            "Chai Discovery <careers@chaidiscovery.com>",
+            "Thank you for applying to Chai Discovery",
+            "After careful review, we've decided not to move forward "
+            "with your application.",
+        )
+        self.assertEqual(cr.classify(m, CFG), "REJECTION")
+
+    def test_bulk_beats_employer_newsletter(self):
+        # Employer domain sending newsletters from a bulk subdomain:
+        # the bulk entry wins so marketing mail is suppressed entirely.
+        m = msg(
+            "MFF <no-reply@michaeljfox-email.org>",
+            "A Future without Parkinson's Is Possible",
+            "newsletter body mentioning moving forward",
+        )
+        self.assertIsNone(cr.classify(m, CFG))
+
+    def test_employer_person_still_classified(self):
+        # A human at the real employer domain is not bulk-suppressed.
+        m = msg(
+            "Recruiter <person@michaeljfox.org>",
+            "Interview availability",
+            "We would like to schedule an interview.",
         )
         self.assertEqual(cr.classify(m, CFG), "REPLY")
 
