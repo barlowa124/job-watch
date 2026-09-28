@@ -61,6 +61,14 @@ SEEN = {url: (meta if isinstance(meta, dict)
 
 TIMEOUT = 15
 
+# Drop closed postings from seen.json once they have been gone this long,
+# to bound the state file size.
+STALE_SEEN_DAYS = 60
+
+# Cap the "Closed since last check" digest section so a mass delisting
+# does not flood the digest.
+MAX_CLOSED_SHOWN = 20
+
 
 def get_json(url):
     req = urllib.request.Request(url, headers={"User-Agent": "job-watch/1.0"})
@@ -380,10 +388,9 @@ def main():
               if url not in current_urls
               and m.get("source") == "watchlist"
               and m.get("company") in probed]
-    # Drop closed entries older than 60 days from state to bound file size.
     for url, m in list(SEEN.items()):
         if url not in current_urls and m.get("last_seen", today) < today \
-                and (date.today() - date.fromisoformat(m["last_seen"])).days > 60:
+                and (date.today() - date.fromisoformat(m["last_seen"])).days > STALE_SEEN_DAYS:
             del SEEN[url]
 
     for j in all_jobs:
@@ -435,7 +442,7 @@ def main():
                      f"({j['url']}) | {j.get('location', '')}{flag}{meta}")
     if closed:
         lines += ["", "## Closed since last check\n"]
-        lines += [f"- [{c['company']}] {c['title']}" for c in closed[:20]]
+        lines += [f"- [{c['company']}] {c['title']}" for c in closed[:MAX_CLOSED_SHOWN]]
     lines += ["", "## Manual checks\n"]
     lines += [f"- {u}" for u in WATCHLIST["manual_check_urls"]]
 
