@@ -1,0 +1,47 @@
+{
+  "employer_senders": [
+    "example-employer.com",
+    "greenhouse-mail.io",
+    "ashbyhq.com",
+    "myworkday.com",
+    "smartrecruiters.com"
+  ],
+  "bulk_ignore_senders": [
+    "linkedin.com",
+    "indeed.com",
+    "newsletters",
+    "marketing"
+  ],
+  "reply_keywords": [
+    "interview",
+    "next steps",
+    "next step",
+    "schedule",
+    "offer",
+    "phone screen",
+    "moving forward",
+    "move forward",
+    "shortlist",
+    "unfortunately",
+    "assessment",
+    "coding challenge",
+    "follow up",
+    "follow-up",
+    "touch base",
+    "regarding your application"
+  ],
+  "confirmation_keywords": [
+    "thank you for applying",
+    "thanks for applying",
+    "received your application",
+    "submission confirmation",
+    "security code",
+    "verification code",
+    "verify your email",
+    "password reset",
+    "username request",
+    "thanks for your interest",
+    "application submitted",
+    "thank you for your application"
+  ]
+}

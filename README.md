@@ -91,6 +91,24 @@ JOB_WATCH_NOTIFY=0       # disable macOS notification
 JOB_WATCH_WEBHOOK=...    # POST digest summary as JSON
 ```
 
+## Reply monitor
+
+`check_replies.py` scans Apple Mail (inbox + junk) for employer replies:
+new messages are matched against `reply_watchlist.json` sender domains and
+reply keywords, classified REPLY vs CONFIRMATION, appended to `replies.log`,
+and surfaced as a macOS notification. Config and state stay local and are
+Git-ignored like `watchlist.json`.
+
+```
+python3 check_replies.py              # check now
+python3 check_replies.py --hours 24   # different lookback
+JOB_REPLY_NOTIFY=0 python3 check_replies.py   # no notification
+```
+
+launchd: copy `deploy/com.user.jobreplywatch.plist` to `~/Library/LaunchAgents`
+(set the two checkout paths inside it) and `launchctl load` it; it runs every
+30 minutes.
+
 ## Tests
 
 ```

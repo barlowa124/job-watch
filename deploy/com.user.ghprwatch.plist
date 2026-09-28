@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.user.ghprwatch</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>/Users/asdf/CascadeProjects/job-search/check_prs.py</string>
+        <string>--quiet</string>
+    </array>
+    <key>StartInterval</key>
+    <integer>1800</integer>
+    <key>StandardOutPath</key>
+    <string>/Users/asdf/CascadeProjects/job-search/ghprwatch.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/asdf/CascadeProjects/job-search/ghprwatch.log</string>
+</dict>
+</plist>

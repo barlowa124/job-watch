@@ -8,3 +8,12 @@ jobwatch.log
 /.env
 /.env.*
 /watchlist.json
+/reply_watchlist.json
+/seen_replies.json
+/seen_replies.json.tmp
+/replies.log
+/jobreplywatch.log
+seen_gh.json
+prs.log
+ghprwatch.log
+gh_watchlist.json

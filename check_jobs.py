@@ -226,6 +226,103 @@ def serpapi():
     return out
 
 
+def eawork():
+    """80,000 Hours job board (backend.eawork.org public JSON API).
+
+    ~1000 EA-aligned listings incl. AI safety, biosecurity, alt protein.
+    """
+    # ~1000 records, slower than the shared TIMEOUT — fetch with its own.
+    try:
+        req = urllib.request.Request(
+            "https://backend.eawork.org/api/jobs/",
+            headers={"User-Agent": "job-watch/1.0"})
+        with urllib.request.urlopen(req, timeout=45) as r:
+            data = json.loads(r.read())
+    except Exception:
+        return None
+    out = []
+    for j in (data or []):
+        locs = j.get("tags_region_country") or j.get("tags_city") or []
+        body = " | ".join(filter(None, [
+            re.sub(r"<[^>]+>", " ", j.get("description", "")),
+            " ".join(j.get("tags_area", [])),
+            " ".join(j.get("tags_skill", [])),
+            " ".join(j.get("tags_exp_required", [])),
+            " ".join(j.get("tags_role_type", [])),
+            " ".join(j.get("tags_degree_required", [])),
+        ]))
+        out.append({
+            "title": j.get("title", ""), "ats": "eawork",
+            "url": j.get("url_external", ""),
+            "location": "; ".join(locs),
+            "company": (j.get("company") or {}).get("name", ""),
+            "body": body})
+    return out
+
+
+def altprotein():
+    """AltProtein.Jobs board (Bubble app; listings render client-side).
+
+    No public data API exposes the listing type, so scrape the rendered DOM
+    via headless Chrome. Returns the ~20 newest cards, newest first.
+    """
+    try:
+        from playwright.sync_api import sync_playwright
+    except ImportError:
+        return None
+    out = []
+    with sync_playwright() as p:
+        b = p.chromium.launch(channel="chrome", headless=True,
+                              args=["--disable-blink-features=AutomationControlled"])
+        ctx = b.new_context(
+            user_agent=("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/130.0.0.0 Safari/537.36"),
+            viewport={"width": 1440, "height": 900}, locale="en-US")
+        pg = ctx.new_page()
+        pg.goto("https://altprotein.jobs/", wait_until="domcontentloaded",
+                timeout=40000)
+        pg.wait_for_timeout(15000)
+        try:
+            pg.locator("text=Open Job Board").first.click(timeout=5000)
+            pg.wait_for_timeout(10000)
+        except Exception:
+            pass
+        cards = pg.locator(".bubble-r-container[class*=entry-]")
+        for i in range(cards.count()):
+            c = cards.nth(i)
+            try:
+                lines = [x.strip() for x in (c.inner_text() or "").split("\n")
+                         if x.strip() and x.strip() != "."]
+            except Exception:
+                continue
+            if not any(l.startswith("Posting date:") for l in lines):
+                continue
+            di = next(k for k, l in enumerate(lines)
+                      if l.startswith("Posting date:"))
+            title = lines[di - 1] if di >= 1 else "?"
+            company = lines[0] if lines else "?"
+            location = lines[di + 1] if di + 1 < len(lines) else ""
+            level = lines[di + 2] if di + 2 < len(lines) else ""
+            url, apply_url = "", ""
+            for a in c.locator("a").all():
+                try:
+                    h = a.get_attribute("href") or ""
+                except Exception:
+                    continue
+                if "/job-details/" in h and not url:
+                    url = h.split("?")[0]
+                elif (a.inner_text() or "").strip() == "Apply" and not apply_url:
+                    apply_url = h
+            out.append({"title": title, "company": company,
+                        "location": location, "url": url or apply_url,
+                        "body": f"{lines[di]} | {level} | "
+                                f"{' | '.join(lines[di+1:])} | apply: {apply_url}",
+                        "ats": "altprotein"})
+        b.close()
+    return out
+
+
 KEY_RE = re.compile("|".join(re.escape(k)
                     for k in WATCHLIST["relevance_keywords"]), re.I)
 EXCLUDE_RE = re.compile("|".join(re.escape(k) for k in
@@ -357,7 +454,8 @@ def main():
                 probed.add(r["name"])
 
     for source, fn in (("zintellect", zintellect),
-                       ("adzuna", adzuna), ("serpapi", serpapi)):
+                       ("adzuna", adzuna), ("serpapi", serpapi),
+                       ("altprotein", altprotein), ("eawork", eawork)):
         try:
             jobs = fn()
             if jobs:
