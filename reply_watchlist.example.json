@@ -43,5 +43,20 @@
     "thanks for your interest",
     "application submitted",
     "thank you for your application"
+  ],
+  "rejection_keywords": [
+    "not move forward",
+    "not be moving forward",
+    "will not be moving forward",
+    "won't be moving forward",
+    "no longer under consideration",
+    "decided not to proceed",
+    "not an ideal fit",
+    "isn't an ideal fit",
+    "not selected to move forward",
+    "unable to move forward with your",
+    "pursue other candidates",
+    "decided to move forward with other",
+    "regret to inform"
   ]
 }

@@ -5,9 +5,14 @@ Queries Mail.app over AppleScript for recent messages in the inbox and junk
 mailbox, matches them against a local watchlist of employer sender domains and
 reply keywords, deduplicates against seen_replies.json, and reports new hits:
 
+- employer-domain mail whose body declines candidacy   -> tier REJECTION
 - employer-domain mail that is not an auto-confirmation -> tier REPLY
-- employer-domain mail that is an auto-confirmation   -> tier CONFIRMATION
-- reply-ish subject from an unknown non-bulk sender   -> tier REPLY
+- employer-domain mail that is an auto-confirmation    -> tier CONFIRMATION
+- reply-ish subject from an unknown non-bulk sender    -> tier REPLY
+
+Message bodies are fetched only for employer-domain senders (rare), because
+ATS platforms reuse identical subjects for confirmations and rejections —
+subject alone cannot distinguish them.
 
 New items are appended to replies.log and shown as a macOS notification.
 State: seen_replies.json. Config: reply_watchlist.json (falls back to
@@ -48,6 +53,50 @@ tell application "Mail"
 end tell
 """
 
+# Bodies are fetched in a separate targeted pass: only employer-domain
+# messages need them (rare), and per-message content reads are the slow part.
+BODY_SCRIPT = """
+tell application "Mail"
+    set out to ""
+    repeat with mb in {inbox, junk mailbox}
+        try
+            repeat with mid in {%s}
+                try
+                    set m to first message of mb whose id is (mid as integer)
+                    set b to content of m
+                    if (count of b) > 4000 then set b to text 1 thru 4000 of b
+                    set AppleScript's text item delimiters to {return, linefeed, tab}
+                    set bItems to text items of b
+                    set AppleScript's text item delimiters to " "
+                    set bFlat to bItems as string
+                    set out to out & (mid as string) & tab & bFlat & linefeed
+                end try
+            end repeat
+        end try
+    end repeat
+    return out
+end tell
+"""
+
+DEFAULT_REJECTION_KEYWORDS = [
+    "not move forward",
+    "not be moving forward",
+    "will not be moving forward",
+    "won't be moving forward",
+    "no longer under consideration",
+    "decided not to proceed",
+    "not an ideal fit",
+    "isn't an ideal fit",
+    "is not an ideal fit",
+    "not selected to move forward",
+    "unable to move forward with your",
+    "pursue other candidates",
+    "other candidates whose",
+    "decided to move forward with other",
+    "not to move forward with your candidacy",
+    "regret to inform",
+]
+
 
 def load_config():
     path = CONFIG if os.path.exists(CONFIG) else EXAMPLE_CONFIG
@@ -58,6 +107,10 @@ def load_config():
         "bulk": [s.lower() for s in cfg.get("bulk_ignore_senders", [])],
         "reply_kw": [s.lower() for s in cfg.get("reply_keywords", [])],
         "confirm_kw": [s.lower() for s in cfg.get("confirmation_keywords", [])],
+        "reject_kw": [
+            s.lower()
+            for s in cfg.get("rejection_keywords", DEFAULT_REJECTION_KEYWORDS)
+        ],
     }
 
 
@@ -76,19 +129,22 @@ def save_seen(seen):
     os.replace(tmp, SEEN)
 
 
-def fetch_messages(hours):
-    script = APPLESCRIPT % hours
+def _run_osascript(script, timeout=240):
     out = subprocess.run(
         ["osascript", "-"],
         input=script,
         capture_output=True,
         text=True,
-        timeout=120,
+        timeout=timeout,
     )
     if out.returncode != 0:
         raise RuntimeError(out.stderr.strip() or "osascript failed")
+    return out.stdout
+
+
+def fetch_messages(hours):
     msgs = []
-    for line in out.stdout.splitlines():
+    for line in _run_osascript(APPLESCRIPT % hours).splitlines():
         parts = line.split("\t")
         if len(parts) < 4:
             continue
@@ -98,9 +154,33 @@ def fetch_messages(hours):
                 "date": parts[1].strip(),
                 "sender": parts[2].strip(),
                 "subject": "\t".join(parts[3:]).strip(),
+                "body": "",
             }
         )
     return msgs
+
+
+def fetch_bodies(msgs, employer_domains):
+    """Fill msg['body'] for employer-domain messages via a targeted id lookup."""
+    ids = []
+    for m in msgs:
+        hay = m["sender"].lower()
+        if any(d in hay for d in employer_domains):
+            ids.append(m["id"])
+    if not ids:
+        return
+    id_list = ", ".join(str(int(i)) for i in ids)
+    try:
+        out = _run_osascript(BODY_SCRIPT % id_list)
+    except Exception:
+        return
+    bodies = {}
+    for line in out.splitlines():
+        mid, _, body = line.partition("\t")
+        bodies[mid.strip()] = body.strip()
+    for m in msgs:
+        if m["id"] in bodies:
+            m["body"] = bodies[m["id"]]
 
 
 def sender_addr(sender):
@@ -113,14 +193,25 @@ def classify(msg, cfg):
     subj = msg["subject"].lower()
     hay = addr + " " + msg["sender"].lower()
 
+    body = msg.get("body", "").lower()
+
     is_employer = any(d in hay for d in cfg["employer"])
     is_bulk = any(d in hay for d in cfg["bulk"])
-    is_confirm = any(k in subj for k in cfg["confirm_kw"])
+    is_confirm = any(k in subj for k in cfg["confirm_kw"]) or any(
+        k in body for k in cfg["confirm_kw"]
+    )
+    is_rejection = any(k in body for k in cfg["reject_kw"])
     is_replyish = any(k in subj for k in cfg["reply_kw"])
 
     if is_employer:
+        if is_rejection:
+            return "REJECTION"
+        # Employer mail with no fetched body can't be told from a rejection
+        # that reuses a confirmation subject; flag it rather than guess.
+        if not body:
+            return "REPLY"
         return "CONFIRMATION" if is_confirm else "REPLY"
-    if is_replyish and not is_bulk and not is_confirm:
+    if is_replyish and not is_bulk and not is_confirm and not is_rejection:
         return "REPLY"
     return None
 
@@ -154,6 +245,7 @@ def main():
     except Exception as exc:
         print(f"mail query failed: {exc}", file=sys.stderr)
         return 1
+    fetch_bodies(msgs, cfg["employer"])
 
     new = []
     for m in msgs:
@@ -173,16 +265,23 @@ def main():
             if not quiet:
                 print(line)
 
-    replies = [m for m in new if m["tier"] == "REPLY"]
-    if replies:
-        first = replies[0]
+    actionable = [m for m in new if m["tier"] in ("REPLY", "REJECTION")]
+    if actionable:
+        first = actionable[0]
         notify(
-            f"Job reply: {first['sender'][:40]}",
-            f"{first['subject']} (+{len(replies)-1} more)" if len(replies) > 1 else first["subject"],
+            f"Job {first['tier'].lower()}: {first['sender'][:40]}",
+            f"{first['subject']} (+{len(actionable)-1} more)"
+            if len(actionable) > 1
+            else first["subject"],
         )
     save_seen(seen)
     if not quiet:
-        print(f"checked {len(msgs)} messages, {len(new)} new, {len(replies)} replies")
+        n_rej = sum(1 for m in new if m["tier"] == "REJECTION")
+        n_rep = sum(1 for m in new if m["tier"] == "REPLY")
+        print(
+            f"checked {len(msgs)} messages, {len(new)} new, "
+            f"{n_rep} replies, {n_rej} rejections"
+        )
     return 0
 
 

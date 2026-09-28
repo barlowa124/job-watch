@@ -95,9 +95,12 @@ JOB_WATCH_WEBHOOK=...    # POST digest summary as JSON
 
 `check_replies.py` scans Apple Mail (inbox + junk) for employer replies:
 new messages are matched against `reply_watchlist.json` sender domains and
-reply keywords, classified REPLY vs CONFIRMATION, appended to `replies.log`,
-and surfaced as a macOS notification. Config and state stay local and are
-Git-ignored like `watchlist.json`.
+reply keywords, classified REJECTION vs REPLY vs CONFIRMATION, appended to
+`replies.log`, and surfaced as a macOS notification. Employer-domain
+messages get their bodies fetched so rejections are caught even when the
+ATS reuses a confirmation-style subject (subject lines alone cannot tell
+them apart). Config and state stay local and are Git-ignored like
+`watchlist.json`.
 
 ```
 python3 check_replies.py              # check now
