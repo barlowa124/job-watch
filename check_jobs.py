@@ -398,6 +398,14 @@ def main():
             SEEN[j["url"]].update({"title": j["title"], "company": j["company"],
                                    "source": "watchlist" if j["ats"] in PROBES else j["ats"]})
 
+    # New URLs that closely match a just-closed posting at the same
+    # company are probable relists, not new roles.
+    try:
+        from repost import find_reposts
+        reposts = find_reposts(new_jobs, closed)
+    except Exception:
+        reposts = {}
+
     tmp = SEEN_PATH.with_suffix(".tmp")
     tmp.write_text(json.dumps(SEEN, indent=1, sort_keys=True))
     os.replace(tmp, SEEN_PATH)
@@ -429,6 +437,8 @@ def main():
     lines.append("## New relevant postings\n")
     for j, _, senior, loc_match, hits, level in relevant:
         flags = flags_for(j)
+        if j["url"] in reposts:
+            flags.insert(0, f"possible repost of {reposts[j['url']][0]}")
         if senior:
             flags.insert(0, "seniority")
         if loc_match:

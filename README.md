@@ -11,6 +11,10 @@ general job aggregator misses the niche.
   tries each candidate slug against all three ATS endpoints and keeps the
   first that answers. Run `--probe` to see what resolved.
 - Deduplicates against `seen.json`. Each run reports only new postings.
+- Flags probable reposts: a new URL closely matching a just-closed
+  posting at the same company is annotated `possible repost of <url>`
+  instead of silently counting as new. Token similarity by default;
+  E5 embeddings via `vector-db-mcp[embed]` when installed.
 - Flags seniority in titles and preferred-location matches, sorts
   attainable roles first.
 - Tracks postings that disappeared since the last run, so closed roles
