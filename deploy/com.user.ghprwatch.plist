@@ -7,14 +7,14 @@
     <key>ProgramArguments</key>
     <array>
         <string>/usr/bin/python3</string>
-        <string>/Users/asdf/CascadeProjects/job-search/check_prs.py</string>
+        <string>/ABSOLUTE/PATH/TO/job-watch/check_prs.py</string>
         <string>--quiet</string>
     </array>
     <key>StartInterval</key>
     <integer>1800</integer>
     <key>StandardOutPath</key>
-    <string>/Users/asdf/CascadeProjects/job-search/ghprwatch.log</string>
+    <string>/ABSOLUTE/PATH/TO/job-watch/ghprwatch.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/asdf/CascadeProjects/job-search/ghprwatch.log</string>
+    <string>/ABSOLUTE/PATH/TO/job-watch/ghprwatch.log</string>
 </dict>
 </plist>
